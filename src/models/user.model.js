@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from "bcrypt";
-
+import jwt from "jsonwebtoken";
 const userSchema = new mongoose.Schema({
     fullname:{
         type:String,
@@ -31,10 +31,6 @@ const userSchema = new mongoose.Schema({
     },
     address:{
         type:String,
-        required:true,
-    },
-    isAdmin:{
-        type:Boolean,
     },
     cart:[
         {
@@ -57,6 +53,19 @@ userSchema.pre("save",async function(req,res,next){
     this.password = await bcrypt.hash(this.password,10);
 })
 
-
+userSchema.methods.getAccessToken = function(){
+    return jwt.sign(
+        {
+            id:this._id,
+            username:this.username,
+            email:this.email,
+            fullname:this.fullname
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn:"1h"
+        }
+    )
+}
 
 export const User = mongoose.model('User',userSchema);

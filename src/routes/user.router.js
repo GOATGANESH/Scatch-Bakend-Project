@@ -3,7 +3,13 @@ import { userRegister } from "../controllers/user.controller.js";
 
 const userRouter = Router();
 
-userRouter.route("/register").post(userRegister);
+userRouter.route("/signupuser").post(userRegister);
+// userRouter.post("/signupuser",(req,res,next)=>{
+//     console.log(req.body);
+//     res.json({
+//         success:true
+//     })
+// })
 
 
 export {userRouter};
