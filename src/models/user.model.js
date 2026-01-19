@@ -2,11 +2,6 @@ import mongoose from 'mongoose';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const userSchema = new mongoose.Schema({
-    fullname:{
-        type:String,
-        required:true,
-        trim:true,
-    },
     username:{
         type:String,
         required:true,
@@ -66,6 +61,11 @@ userSchema.methods.getAccessToken = function(){
             expiresIn:"1h"
         }
     )
+}
+
+userSchema.methods.isPasswordCorrect = async function(password){
+    const result = await bcrypt.compare(password,this.password);
+    return result;
 }
 
 export const User = mongoose.model('User',userSchema);
