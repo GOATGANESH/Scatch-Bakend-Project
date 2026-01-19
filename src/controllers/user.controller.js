@@ -2,7 +2,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
-
+import {Product } from "../models/product.model.js"
 
 const userRegister = asyncHandler(async (req, res, next) => {
 
@@ -56,4 +56,32 @@ const userLogin = asyncHandler(async (req, res, next) => {
   );
 });
 
-export { userRegister, userLogin };
+const userLogout = asyncHandler(async (req,res,next)=>{
+    res
+    .cookie("token","")
+    .status(200)
+    .json(new ApiResponse(200,null,"successfully logout!"));
+})
+
+const addProductToCart = asyncHandler(async (req,res,next)=>{
+  
+  
+  const productId = req.params.id;
+  const userId = req.user._id;
+  const product = await Product.findById(productId);
+  
+  if(!product) throw new ApiError(501,"Product not found !");
+  const user = await User.findById(userId);
+  if(user.cart.includes(product._id)){
+    throw new ApiError(401,"Product already in cart")
+  }
+  user.cart.push(product._id)
+  await user.save()
+  res.status(200).json({
+  success: true,
+  message: "Product added to cart",
+  cart: user.cart
+});
+})
+
+export { userRegister, userLogin,userLogout ,addProductToCart};

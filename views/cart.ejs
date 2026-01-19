@@ -19,36 +19,15 @@
   <body class="w-full h-screen bg-zinc-900 text-white flex flex-col p-4">
     <div class="w-full flex justify-between">
       <h1 id="title">Scatch</h1>
-      <h3 class="text-xl font-bold cursor-pointer border border-white px-2 py-1 bg-zinc-800 rounded-md"><a href="api/v1/users/cart">cart</a></h3>
     </div>
-    <div class="content flex w-full bg-zinc-800 h-full p-2">
-      <aside
-        class="filter-section w-1/5 border-r-2 flex flex-col justify-around px-3 h-full"
-      >
-        <div class="filter">
-          <span>Sort by</span>
-          <select
-            class="border outline-none border-white rounded-sm px-2 py-1"
-            name="filter"
-            id="filter"
-          >
-            <option value="popular">Popular</option>
-          </select>
-        </div>
-        <ul class="flex flex-col gap-2">
-          <li class="list-none p-1">New Collection</li>
-          <li class="list-none p-1">All Products</li>
-          <li class="list-none p-1">Discounted Products</li>
-        </ul>
-        <div class="filter2">
-          <h3>Availability</h3>
-          <h3>Discount</h3>
-        </div>
-        <button id="logout-user" class="bg-red-600 text-white rounded-md px-3 py-1 cursor-pointer">Logout</button>
-      </aside>
-      <section class="container h-full w-4/5 p-3 flex flex-wrap gap-3">
-        <% if(productData.length > 0 ){%> <%productData.forEach(product =>{%>
-        <div
+   <div class="content p-10 border border-white">
+    
+       <h1 class="text-3xl font-bold ">Your Cart</h1>
+        <hr class="w-full my-2">
+        <div class="container h-full w-4/5 p-3 flex flex-wrap gap-3">
+            <% if(cart.length > 0) {%>
+              <% cart.forEach(product =>{%>
+                <div
         id="<%=product._id%>"
           class="card w-[220px] shrink-0 h-[300px] overflow-hidden rounded-xs bg-red-400"
         >
@@ -70,9 +49,10 @@
             </div>
           </div>
         </div>
-        <%})%> <%}%>
-      </section>
-    </div>
+        <%})%>
+              <%}%>
+        </div>
+   </div>
   </body>
   <script src="/javascripts/script.js"></script>
 </html>

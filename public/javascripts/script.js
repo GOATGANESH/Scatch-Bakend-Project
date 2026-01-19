@@ -1,3 +1,10 @@
+function clearInput(){
+const inputs = Array.from( document.getElementsByTagName("input"))
+inputs.forEach(input=>{
+  if(!input.classList.contains("btn")) input.value=""
+})
+
+}
 function registerUser() {
   const username = document.getElementById("username").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -15,10 +22,11 @@ function registerUser() {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
+
       if (data.success) {
-        window.location.href = "/shop";
-      } else console.log(data);
+        alert("account created ! you can login !");
+      } else alert(data.message);
+      clearInput();
     });
 }
 
@@ -37,15 +45,46 @@ const loginUser = async function(e){
     body:JSON.stringify({email,password})
   })
   const data = await response.json();
-  if(data.success) window.location.href = "api/v1/owners/admin"
-  else console.log(data)
+  if(data.success){
+    if(email == "ganesh@gmail.com")window.location.href = "api/v1/owners/admin"
+    else window.location.href = "/shop"
+  }
+  else{
+    alert(data.message)
+  }
+
 }
 
-function registerProduct(){
-  
+const logoutAdmin = function(){
+  fetch("logout")
+    .then(res=>res.json())
+    .then(data=>{
+      if(data.success) window.location.href="/"
+      else alert(data.message)
+    })
+}
+const logoutUser = function(){
+  fetch("api/v1/users/logout")
+    .then(res=>res.json())
+    .then(data=>{
+      if(data.success) window.location.href="/"
+      else alert(data.message)
+    })
+}
+async function registerProduct(formData){
+ const res = await fetch("product/register",{
+  method:"POST",
+  body:formData
+ })
+ const data = await res.json();
+ if(data.success){
+ alert("Product added !");
+ clearInput();
+ }
+ else alert(data.message);
 }
 
-document.body.addEventListener("submit", function (e) {
+document.body.addEventListener("submit",async function (e) {
   e.preventDefault();
   if (e.target.matches("#signup-form")) {
     registerUser();
@@ -54,11 +93,39 @@ document.body.addEventListener("submit", function (e) {
     loginUser(e);
   }
   else if(e.target.matches("#add-product-form")){
-      registerProduct();
+    const formData = new FormData(e.target);
+    await registerProduct(formData);
   }
   
 });
 
-addEventListener("load",()=>{
+function getTargetElement(e,id){
+  return e.target.matches(id) || null
+}
+
+
+function addProductToCart(e){
+  const element = e.target.closest(".card");
+
+  fetch(`api/v1/users/addtocart/${element.id}`)
+  .then(res=>res.json())
+  .then(data=>{
+     alert(data.message)
+  })
+}
+
+document.body.addEventListener("click",(e)=>{
+  if(getTargetElement(e,"#logout-admin")){
+    logoutAdmin();
+  }
+  else if(getTargetElement(e,"#logout-user")){
+    logoutUser();
+  }
+  
+  else if(getTargetElement(e,"#add-to-cart")){
+    addProductToCart(e);
+  }
   
 })
+
+
